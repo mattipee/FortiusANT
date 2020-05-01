@@ -162,10 +162,10 @@ class clsFortiusAntConsole:
 
     def SetValues(self, fSpeed, iRevs, iPower, iTargetMode, iTargetPower, fTargetGrade, iTacx, iHeartRate, iTeeth):
         # ----------------------------------------------------------------------
-        # Console: Update current readings, once per second
+        # Console/LCD: Update current readings, once per second
         # ----------------------------------------------------------------------
         delta = time.time() - self.LastTime   # Delta time since previous
-        if delta >= 1 and (not clv.gui or debug.on(debug.Application)):
+        if delta >= 1:
             self.LastTime = time.time()           # Time in seconds
 
             if   iTargetMode == gui.mode_Power:
@@ -179,6 +179,29 @@ class clsFortiusAntConsole:
             msg = "Target=%s Speed=%4.1fkmh hr=%3.0f Current=%3.0fW Cad=%3.0f r=%4.0f T=%3.0f" % \
                   (  sTarget,    fSpeed,  iHeartRate,       iPower,     iRevs,  iTacx, int(iTeeth) )
             logfile.Console (msg)
+
+            if (clv.lcd):
+                # --------------------
+                #|Grade      -0.5 %   |
+                #|Power     100   W   |
+                #|Speed      46.5 km/h|
+                #|Cadence    50   rpm |
+                # --------------------
+
+                gradeString = ("%3.1f %%" % (fTargetGrade + 10)).rjust(7).ljust(10)
+                powerString = ("%3.0f   W" % iPower).rjust(7).ljust(10)
+                speedString = ("%3.1f km/h" % round(fSpeed, 1)).rjust(10).ljust(10)
+                cadenceString = ("%3.0f   rpm" % iRevs).rjust(9).ljust(10)
+
+                msg  = "\n -------------------- \n"
+                msg += "| Grade    %s|\n" % gradeString
+                msg += "| Power    %s|\n" % powerString
+                msg += "| Speed    %s|\n" % speedString
+                msg += "| Cadence  %s|\n" % cadenceString
+                msg += " -------------------- \n"
+
+                # TODO write to I2C LCD panel, for now, just Console output
+                logfile.Console(msg)
 
     def SetMessages(self, Tacx=None, Dongle=None, HRM=None):
         if Tacx   != None:

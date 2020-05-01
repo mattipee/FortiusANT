@@ -42,6 +42,7 @@ class CommandLineVariables(object):
     debug           = 0
     gui             = False
     hrm             = None       # introduced 2020-02-09; None=not specified, numeric=HRM device, -1=no HRM
+    lcd             = False
     manual          = False
     manualGrade     = False
     PedalStrokeAnalysis = False
@@ -89,6 +90,7 @@ class CommandLineVariables(object):
         parser.add_argument('-d','--debug',     help='Show debugging data',                                 required=False, default=False)
         parser.add_argument('-g','--gui',       help='Run with graphical user interface',                   required=False, action='store_true')
         parser.add_argument('-H','--hrm',       help='Pair this Heart Rate Monitor (0: any, -1: none)',     required=False, default=False)
+        parser.add_argument('-L','--lcd',       help='Enable 20x04 character LCD (Raspberry PI only)',      required=False, action='store_true')
         parser.add_argument('-m','--manual',    help='Run manual power (ignore target from ANT+ Dongle)',     required=False, action='store_true')
         parser.add_argument('-M','--manualGrade',help='Run manual grade (ignore target from ANT+ Dongle)',    required=False, action='store_true')
         parser.add_argument('-n','--calibrate', help='Do not calibrate before start',                       required=False, action='store_false')
@@ -119,13 +121,14 @@ class CommandLineVariables(object):
         #-----------------------------------------------------------------------
         self.autostart              = args.autostart
         self.gui                    = args.gui
+        self.lcd                    = args.lcd
         self.manual                 = args.manual
         self.manualGrade            = args.manualGrade
         self.calibrate              = args.calibrate
         self.PowerMode              = args.PowerMode
         self.PedalStrokeAnalysis    = args.PedalStrokeAnalysis
         self.SimulateTrainer        = args.simulate
-
+         
         if self.manual and self.manualGrade:
             logfile.Console("-m and -M are mutually exclusive; manual power selected")
             self.manualGrade = False        # Mutually exclusive
@@ -321,6 +324,7 @@ class CommandLineVariables(object):
             if v or self.args.debug:         logfile.Console("-d %s (%s)" % (self.debug, bin(self.debug) ) )
             if      self.gui:                logfile.Console("-g")
             if v or self.args.hrm:           logfile.Console("-H %s" % self.hrm )
+            if      self.lcd:                logfile.Console("-L")
             if      self.manual:             logfile.Console("-m")
             if      self.manualGrade:        logfile.Console("-M")
             if      not self.args.calibrate: logfile.Console("-n")

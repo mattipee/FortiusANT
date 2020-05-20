@@ -168,17 +168,18 @@ class clsFortiusAntConsole:
         if delta >= 1:
             self.LastTime = time.time()           # Time in seconds
 
-            if   iTargetMode == gui.mode_Power:
-                sTarget = "%3.0fW" % iTargetPower
-            elif iTargetMode == gui.mode_Grade:
-                sTarget = "%3.1f%%" % fTargetGrade
-                if iTargetPower > 0:                         # 2020-01-22
-                    sTarget += "(%iW)" % iTargetPower        # Target power added for reference
-            else:
-                sTarget = "None"
-            msg = "Target=%s Speed=%4.1fkmh hr=%3.0f Current=%3.0fW Cad=%3.0f r=%4.0f T=%3.0f" % \
-                  (  sTarget,    fSpeed,  iHeartRate,       iPower,     iRevs,  iTacx, int(iTeeth) )
-            logfile.Console (msg)
+            if (not clv.gui or debug.on(debug.Application)):
+                if   iTargetMode == gui.mode_Power:
+                    sTarget = "%3.0fW" % iTargetPower
+                elif iTargetMode == gui.mode_Grade:
+                    sTarget = "%3.1f%%" % fTargetGrade
+                    if iTargetPower > 0:                         # 2020-01-22
+                        sTarget += "(%iW)" % iTargetPower        # Target power added for reference
+                else:
+                    sTarget = "None"
+                msg = "Target=%s Speed=%4.1fkmh hr=%3.0f Current=%3.0fW Cad=%3.0f r=%4.0f T=%3.0f" % \
+                      (  sTarget,    fSpeed,  iHeartRate,       iPower,     iRevs,  iTacx, int(iTeeth) )
+                logfile.Console (msg)
 
             if (clv.lcd):
                 # --------------------

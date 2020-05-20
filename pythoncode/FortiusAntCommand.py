@@ -128,7 +128,7 @@ class CommandLineVariables(object):
         self.PowerMode              = args.PowerMode
         self.PedalStrokeAnalysis    = args.PedalStrokeAnalysis
         self.SimulateTrainer        = args.simulate
-         
+ 
         if self.manual and self.manualGrade:
             logfile.Console("-m and -M are mutually exclusive; manual power selected")
             self.manualGrade = False        # Mutually exclusive

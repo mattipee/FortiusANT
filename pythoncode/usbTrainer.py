@@ -100,6 +100,7 @@ __version__ = "2020-11-10"
 #-------------------------------------------------------------------------------
 import array
 import usb.core
+import numpy
 import os
 import random
 import struct
@@ -1622,6 +1623,8 @@ class clsTacxNewUsbTrainer(clsTacxUsbTrainer):
         if debug.on(debug.Function):logfile.Write ("clsTacxNewUsbTrainer.__init__()")
         self.SpeedScale = 301                        # TotalReverse: 289.75
         self.PowerResistanceFactor = 128866          # TotalReverse
+        self.AvgResistanceArray = numpy.array([0,0,0,0]) # Array for collating running averages
+        self.AvgWheelSpeedArray = numpy.array([0,0,0,0]) # Array for collating running averages
 
         self.Headunit   = Headunit
         self.UsbDevice  = UsbDevice
@@ -1889,6 +1892,14 @@ class clsTacxNewUsbTrainer(clsTacxUsbTrainer):
             self.PedalEcho          = tuple[nEvents]
             self.TargetResistanceFT = tuple[nTargetResistance]
             self.WheelSpeed         = tuple[nSpeed]
+
+            self.AvgWheelSpeedArray = numpy.append(self.AvgWheelSpeedArray, self.WheelSpeed) # Add new running average value to array
+            self.AvgWheelSpeedArray = numpy.delete(self.AvgWheelSpeedArray, 0) # Remove oldest from array
+            self.WheelSpeed = numpy.average(self.AvgWheelSpeedArray)
+
+            self.AvgResistanceArray = numpy.append(self.AvgResistanceArray, self.CurrentResistance) # Add new running average value to array
+            self.AvgResistanceArray = numpy.delete(self.AvgResistanceArray, 0) # Remove oldest from array
+            self.CurrentResistance = numpy.average(self.AvgResistanceArray)
 
             self.Wheel2Speed()
             self.CurrentResistance2Power()
